@@ -12,13 +12,41 @@ Reusable prompts for working with the dxo1control codebase. These prompts provid
   - Use for: Adding features, fixing bugs, refactoring code
   - Includes: Architecture principles, critical invariants, coding standards
 
-### Future Prompts (Planned)
+### Development Workflow
 
-- **bug-hunt.md** - Systematic bug discovery and analysis
-- **performance-review.md** - Performance optimization and profiling
-- **api-review.md** - API design and compatibility review
-- **usb-protocol.md** - USB protocol implementation and debugging
-- **image-processing.md** - DNG/image processing optimization
+- **[feature-implementation.md](./feature-implementation.md)** - Structured workflow for implementing features
+  - Use for: Implementing features from ROADMAP.md, building new capabilities
+  - Includes: Discovery, planning, implementation phases with verification loops
+
+- **[architecture-aware-feature.md](./architecture-aware-feature.md)** - Adding features while respecting architecture
+  - Use for: New functionality that must align with existing design
+  - Includes: Architecture review, invariant checking, integration planning
+
+### Quality Assurance
+
+- **[bug-hunt.md](./bug-hunt.md)** - Systematic bug discovery and analysis
+  - Use for: Proactive bug finding after changes, code review
+  - Includes: USB communication, image processing, browser compatibility checks
+
+- **[invariant-check.md](./invariant-check.md)** - Verify code against system invariants
+  - Use for: Checking changes respect all 11 system invariants
+  - Includes: Systematic checklist, violation detection, compliance reporting
+
+### Optimization & Refactoring
+
+- **[performance-review.md](./performance-review.md)** - Performance optimization and profiling
+  - Use for: Identifying bottlenecks, improving efficiency
+  - Includes: USB communication, image processing, browser performance
+
+- **[refactor-for-clarity.md](./refactor-for-clarity.md)** - Improve code clarity without changing behavior
+  - Use for: Making code more maintainable, improving readability
+  - Includes: Naming, control flow, complexity reduction
+
+### Specialized Tasks
+
+- **[usb-protocol-debug.md](./usb-protocol-debug.md)** - Debug USB communication with DXO One camera
+  - Use for: Troubleshooting USB issues, understanding protocol
+  - Includes: Connection debugging, message format, transfer issues
 
 ---
 
@@ -93,7 +121,7 @@ When creating new prompts, use this template:
 ### Example 1: Feature Development
 
 ```markdown
-Using: engineering.md
+Using: feature-implementation.md
 
 Task: Add support for getting camera battery status
 
@@ -109,47 +137,54 @@ Success Criteria:
 - UI shows battery percentage
 - Validates battery command before sending
 - Handles error if command fails
-- Unit test for battery status parsing
+- Tested with actual DXO One camera
 ```
 
-### Example 2: Bug Fix
+### Example 2: Bug Hunting
 
 ```markdown
-Using: engineering.md
+Using: bug-hunt.md
 
-Task: Fix USB disconnect not updating connection state
+Task: Review recent USB communication changes for bugs
 
 Context:
-- Issue: UI still shows "Connected" after device unplugged
-- Violates: INV-DATA-003 (connection state consistency)
-- Files: dxo1usb.js, usb.html
-- Expected: Disconnect event should clear state and update UI
+- Just implemented battery status and settings features
+- Need to find bugs before users encounter them
+- Focus on USB communication and error handling
 
-Success Criteria:
-- Connection state accurately reflects hardware
-- UI updates immediately on disconnect
-- No phantom connection state
-- Test with actual USB disconnect
+Review Areas:
+- USB message format (INV-DATA-001)
+- Command validation (INV-SEC-003)
+- Connection state management (INV-DATA-003)
+- Error recovery (INV-CONS-003)
+
+Success:
+- Systematic review of all changes
+- List of potential bugs found (or "none found")
+- Priority and severity for each issue
 ```
 
-### Example 3: Refactoring
+### Example 3: Invariant Check
 
 ```markdown
-Using: engineering.md
+Using: invariant-check.md
 
-Task: Extract command validation into reusable function
+Task: Verify battery status feature respects invariants
 
 Context:
-- Multiple functions validate commands (INV-SEC-003)
-- Code duplication in sendCommand(), captureImage(), etc.
-- Create validateCommand() utility
-- Must not break existing API (INV-API-001)
+- Adding new getBatteryStatus() function to dxo1usb.js
+- Adding UI battery indicator
+- Need to confirm all invariants are maintained
 
-Success Criteria:
-- Single validateCommand(cmdType) function
-- All command functions use it
-- Existing tests still pass
-- No breaking changes to exports
+Check:
+- All 11 invariants from INVARIANTS.md
+- Identify any violations or ambiguities
+- Propose new invariants if needed
+
+Success:
+- ✅ Invariants maintained (list which ones)
+- ⚠️ Items needing attention (if any)
+- ❌ Violations found (must fix before merge)
 ```
 
 ---
@@ -238,6 +273,21 @@ These prompts follow Safe Vibe Coding principles:
 
 ---
 
+## Quick Reference
+
+| Prompt | When to Use | Key Focus |
+|--------|-------------|-----------|
+| **engineering.md** | General development | Coding standards, workflow |
+| **feature-implementation.md** | Adding new features | Structured implementation |
+| **architecture-aware-feature.md** | Architecture-sensitive changes | Design alignment |
+| **bug-hunt.md** | After changes | Proactive bug finding |
+| **invariant-check.md** | Before merging | Invariant compliance |
+| **performance-review.md** | Optimization needed | Bottleneck identification |
+| **refactor-for-clarity.md** | Code hard to read | Maintainability |
+| **usb-protocol-debug.md** | USB issues | Communication debugging |
+
+---
+
 **Last Updated**: 2026-01-04
-**Prompt Count**: 1 (engineering.md)
+**Prompt Count**: 8
 **Status**: Active development
